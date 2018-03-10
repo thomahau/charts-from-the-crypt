@@ -10,16 +10,22 @@
   </head>
   <body>
     <header class="section" role="banner">
-      <div class="level">
-        <div class="level-item">
+      <div class="columns is-centered is-vcentered">
+        <div class="column is-narrow">
           <form>
             <label class="label" for="coin">Cryptocurrency: </label>
             <div class="control">
-              <input class="input is-small" id="coin" type="text" placeholder="Bitcoin (BTC)">
+              <div class="select is-small" id="coin" name="coin">
+                <select>
+                  <option value="BTC">Bitcoin (BTC)</option>
+                  <option value="ETH">Ethereum (ETH)</option>
+                  <option value="XRP">Ripple (XRP)</option>
+                </select>
+              </div>
             </div>
           </form>
         </div>
-        <div class="level-item">
+        <div class="column is-narrow">
           <div class="field is-grouped">
             <p class="control">
               <a class="button is-warning is-outlined">
@@ -44,19 +50,36 @@
             </p>
           </div>
         </div>
-        <div class="level-item">
+        <div class="column is-narrow">
           <p>About</p>
         </div>
       </div>
-      <div class="level is-mobile has-text-centered">
-          <p class="level-item">Range: </p>
-          <p class="level-item"><a class="button">1D</a></p>
-          <p class="level-item"><a class="button">1W</a></p>
-          <p class="level-item"><a class="button">1M</a></p>
-          <p class="level-item"><a class="button">3M</a></p>
-          <p class="level-item"><a class="button">6M</a></p>
-          <p class="level-item"><a class="button">1Y</a></p>
-          <p class="level-item"><a class="button is-warning is-outlined">ALL</a></p> <!-- BACK TO COLUMNS -->
+      <div class="columns is-centered">
+        <div class="column is-narrow">
+          <div class="field is-grouped">
+            <p class="control">
+              <a class="button">1D</a>
+            </p>
+            <p class="control">
+              <a class="button">1W</a>
+            </p>
+            <p class="control">
+              <a class="button">1M</a>
+            </p>
+            <p class="control">
+              <a class="button">3M</a>
+            </p>
+            <p class="control">
+              <a class="button">6M</a>
+            </p>
+            <p class="control">
+              <a class="button">1Y</a>
+            </p>
+            <p class="control">
+              <a class="button is-warning is-outlined">ALL</a>
+            </p>
+          </div>
+        </div>
       </div>
     </header>
     <main class="section" role="main">
