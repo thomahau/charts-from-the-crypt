@@ -9,14 +9,15 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
   </head>
   <body>
-    <header class="section" role="banner">
-      <div class="columns is-centered is-vcentered">
+    <header role="banner">
+      <div class="columns is-centered is-vcentered has-text-centered">
         <div class="column is-narrow">
           <form>
             <label class="label" for="coin">Cryptocurrency: </label>
             <div class="control">
-              <div class="select is-small" id="coin" name="coin">
-                <select>
+              <div class="select is-small">
+                <select id="coin" name="coin">
+                  <option value="" disabled selected>Select a coin</option>
                   <option value="BTC">Bitcoin (BTC)</option>
                   <option value="ETH">Ethereum (ETH)</option>
                   <option value="XRP">Ripple (XRP)</option>
@@ -26,7 +27,7 @@
           </form>
         </div>
         <div class="column is-narrow">
-          <div class="field is-grouped">
+          <div class="field is-grouped is-grouped-centered">
             <p class="control">
               <a class="button is-warning is-outlined">
                 <span class="icon">
@@ -51,12 +52,12 @@
           </div>
         </div>
         <div class="column is-narrow">
-          <p>About</p>
+          <a class="button is-warning is-outlined js-about">Help</a>
         </div>
       </div>
       <div class="columns is-centered">
         <div class="column is-narrow">
-          <div class="field is-grouped">
+          <div class="field is-grouped is-grouped-centered">
             <p class="control">
               <a class="button">1D</a>
             </p>
@@ -82,11 +83,41 @@
         </div>
       </div>
     </header>
+    <div class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Charts from the Crypt</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>To get started, select which cryptocurrency you would like to investigate using the input field. Using the buttons, you may also choose the desired currency to compare with, as well as the desired range of time to chart.</p>
+        </section>
+        <footer class="modal-card-foot">
+          <p>Charts from the Crypt was built by <a class="has-text-warning" href="https://github.com/thomahau">Thomas Hauge</a>. The price data is sourced from the <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare API</a>, and the charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
+        </footer>
+      </div>
+    </div>
     <main class="section" role="main">
-      <div class="container has-text-centered">
+      <div class="container has-text-centered welcome-message">
         <h1 class="title">Charts from the Crypt</h1>
         <p class="subtitle">Interactive price history charts for various cryptocurrencies.</p>
       </div>
     </main>
+
+    <!-- <main class="hero is-large" role="main">
+      <div class="hero-body">
+        <div class="container has-text-centered welcome-message">
+          <h1 class="title">Charts from the Crypt</h1>
+          <p class="subtitle">Interactive price history charts for various cryptocurrencies.</p>
+        </div>
+      </div>
+    </main> -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="js/highstock.js"></script>
+    <script src="js/theme_gray.js"></script>
+    <!-- <script src="js/theme_dark-unica.js"></script> -->
+    <script src="js/app.js" type="text/javascript"></script>
   </body>
 </html>

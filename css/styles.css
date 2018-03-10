@@ -1,6 +1,26 @@
+html {
+	overflow: hidden;
+}
+
+body {
+	height: calc(100vh - 32px);
+}
+
+header {
+	padding-top: 32px;
+}
+
 .label,
 .control {
 	display: inline-block;
 	vertical-align: middle;
 }
 
+.welcome-message {
+	margin-top: 10rem;
+}
+
+/*#chart-container {
+	width: 100%;
+	height: 500px;
+}*/
