@@ -3,11 +3,9 @@ html {
 }
 
 body {
-	height: calc(100vh - 32px);
-}
-
-header {
+	height: 100vh;
 	padding-top: 32px;
+	padding-bottom: 32px;
 }
 
 .label,
@@ -16,11 +14,10 @@ header {
 	vertical-align: middle;
 }
 
-.welcome-message {
-	margin-top: 10rem;
+main {
+	margin-top: 5rem;
 }
 
-/*#chart-container {
-	width: 100%;
-	height: 500px;
-}*/
+.welcome-message {
+	padding-top: 5rem;
+}

@@ -29,7 +29,7 @@
         <div class="column is-narrow">
           <div class="field is-grouped is-grouped-centered">
             <p class="control">
-              <a class="button is-warning is-outlined">
+              <a class="button is-warning is-active">
                 <span class="icon">
                   <i class="fas fa-dollar-sign"></i>
                 </span>
@@ -51,9 +51,7 @@
             </p>
           </div>
         </div>
-        <div class="column is-narrow">
-          <a class="button is-warning is-outlined js-about">Help</a>
-        </div>
+
       </div>
       <div class="columns is-centered">
         <div class="column is-narrow">
@@ -77,12 +75,16 @@
               <a class="button">1Y</a>
             </p>
             <p class="control">
-              <a class="button is-warning is-outlined">ALL</a>
+              <a class="button is-warning is-active">ALL</a>
             </p>
           </div>
         </div>
+        <div class="column is-narrow">
+          <a class="button is-warning is-outlined js-about">Help</a>
+        </div>
       </div>
     </header>
+
     <div class="modal">
       <div class="modal-background"></div>
       <div class="modal-card">
@@ -98,11 +100,13 @@
         </footer>
       </div>
     </div>
-    <main class="section" role="main">
+
+    <main role="main">
       <div class="container has-text-centered welcome-message">
         <h1 class="title">Charts from the Crypt</h1>
         <p class="subtitle">Interactive price history charts for various cryptocurrencies.</p>
       </div>
+      <div class="container" id="chart-container"></div>
     </main>
 
     <!-- <main class="hero is-large" role="main">
