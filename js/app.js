@@ -39,16 +39,18 @@ function handleCoinSelection() {
 	});
 }
 
-function renderChart(data) {
-	$('.welcome-message').remove();
-	console.log(data);
-	// $('#chart-container').html(data);
+function renderChart(rawData) {
+	// console.log(rawData);
 
-	// $.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function(
-	// 	data
-	// ) {
-	// Create the chart
-	Highcharts.stockChart('chart-container', {
+	const data = rawData['Data'].map(item => {
+		return [item.time, item.close];
+	});
+
+	console.log(data);
+	$('.welcome-message').remove();
+	$('#chart-container').prop('hidden', false);
+
+	let chart = Highcharts.stockChart('chart-container', {
 		navigator: {
 			enabled: false
 		},
@@ -58,24 +60,29 @@ function renderChart(data) {
 		},
 
 		rangeSelector: {
-			selected: 1
+			enabled: false
 		},
 
 		title: {
 			text: 'AAPL Stock Price'
 		},
 
-		series: [
-			{
-				name: 'AAPL',
-				data: data,
-				tooltip: {
-					valueDecimals: 2
-				}
+		plotOptions: {
+			series: {
+				turboThreshold: 0
 			}
-		]
+		}
+
+		// series: {
+		// 	name: 'AAPL',
+		// 	data: data,
+		// 	tooltip: {
+		// 		valueDecimals: 2
+		// 	}
+		// }
 	});
-	// });
+
+	chart.addSeries({ data: data });
 }
 
 function handleApp() {
