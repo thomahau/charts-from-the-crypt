@@ -89,6 +89,36 @@ function handleRangeSelection() {
 	});
 }
 
+function handleCurrencySelection() {
+	$('.js-currency-btn').click(function(event) {
+		if (!$(this).hasClass('is-active')) {
+			$('.js-currency-btn.is-active').removeClass('is-warning is-active');
+			$(this).addClass('is-warning is-active');
+			const iconName = $(this)
+				.find('svg')
+				.attr('data-icon');
+			setCurrency(iconName);
+
+			if (!$('#coin option:selected').attr('disabled')) {
+				fetchPriceData();
+			}
+		}
+	});
+}
+
+function setCurrency(iconName) {
+	if (iconName === 'dollar-sign') {
+		STORE.currency = '$';
+		STORE.tsym = 'USD';
+	} else if (iconName === 'euro-sign') {
+		STORE.currency = '€';
+		STORE.tsym = 'EUR';
+	} else if (iconName === 'btc') {
+		STORE.currency = 'BTC';
+		STORE.tsym = 'BTC';
+	}
+}
+
 function getBaseChartOptions() {
 	let chartOptions = {
 		chart: {
@@ -186,7 +216,7 @@ function renderChart(rawData) {
 function handleApp() {
 	handleModal();
 	handleCoinSelection();
-	// handleCurrencySelection();
+	handleCurrencySelection();
 	handleRangeSelection();
 }
 
