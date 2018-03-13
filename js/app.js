@@ -4,8 +4,10 @@ const CRYPTOCOMPARE_ENDPOINT = 'https://min-api.cryptocompare.com/data/';
 const APP_NAME = 'charts_from_the_crypt';
 
 const STORE = {
+	coin: '',
 	fsym: '',
 	// Hardcoded for now
+	currency: '$',
 	tsym: 'USD',
 	// Hardcoded for now
 	range: 'all'
@@ -34,6 +36,7 @@ function fetchPriceData() {
 
 function handleCoinSelection() {
 	$('#coin').on('change', function(event) {
+		STORE.coin = $('#coin option:selected').text();
 		STORE.fsym = $('#coin option:selected').val();
 		fetchPriceData();
 	});
@@ -43,10 +46,10 @@ function renderChart(rawData) {
 	// console.log(rawData);
 
 	const data = rawData['Data'].map(item => {
-		return [item.time, item.close];
+		return [item.time * 1000, item.close];
 	});
+	const latestPrice = data[data.length - 1][1];
 
-	console.log(data);
 	$('.welcome-message').remove();
 	$('#chart-container').prop('hidden', false);
 
@@ -63,26 +66,52 @@ function renderChart(rawData) {
 			enabled: false
 		},
 
-		title: {
-			text: 'AAPL Stock Price'
+		xAxis: {
+			type: 'datetime',
+			labels: {
+				format: '{value:%b %Y}'
+			}
 		},
 
-		plotOptions: {
-			series: {
-				turboThreshold: 0
-			}
+		yAxis: {
+			crosshair: true
+		},
+
+		title: {
+			text: STORE.coin
+		},
+
+		subtitle: {
+			text: `${STORE.currency}${latestPrice}`
+		},
+
+		tooltip: {
+			split: false,
+			headerFormat:
+				'<span style="font-size: 10px">{point.x:%b %d, %Y}</span><br/>',
+			pointFormat:
+				'<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+			valueDecimals: 2
 		}
 
-		// series: {
-		// 	name: 'AAPL',
-		// 	data: data,
-		// 	tooltip: {
-		// 		valueDecimals: 2
+		// plotOptions: {
+		// 	series: {
+		// 		turboThreshold: 0
 		// 	}
+		// },
+
+		// legend: {
+		// 	verticalAlign: top,
+		// 	y: 50
 		// }
 	});
 
-	chart.addSeries({ data: data });
+	let series = {
+		name: `Price (${STORE.tsym})`,
+		data: data
+	};
+
+	chart.addSeries(series);
 }
 
 function handleApp() {
