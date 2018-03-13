@@ -1,5 +1,6 @@
 'use strict';
 
+const COINMARKETCAP_ENDPOINT = 'https://api.coinmarketcap.com/v1/';
 const CRYPTOCOMPARE_ENDPOINT = 'https://min-api.cryptocompare.com/data/';
 const APP_NAME = 'charts_from_the_crypt';
 
@@ -11,6 +12,24 @@ const STORE = {
 	tsym: 'USD',
 	range: 'ALL'
 };
+
+function fetchCoinList() {
+	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=100';
+	$.getJSON(url, renderDatalist);
+}
+
+function renderDatalist(coinList) {
+	const datalist = $('#js-coinlist');
+	const input = $('#coin');
+
+	coinList.forEach(coin => {
+		// Create a new <option> element
+		let option = `
+		<option value="${coin.name} (${coin.symbol})">`;
+		// Add the <option> element to datalist
+		datalist.append(option);
+	});
+}
 
 function handleModal() {
 	$('.js-about').click(function(event) {
@@ -67,11 +86,41 @@ function fetchPriceData() {
 	// .fail(showErr)
 }
 
+function isValidInput(input) {
+	const datalistOptions = $('#js-coinlist').find('option');
+	let optionFound = false;
+
+	datalistOptions.each(function() {
+		let optionValue = $(this).attr('value');
+		if (optionValue === input) {
+			optionFound = true;
+			return optionFound;
+		}
+	});
+	return optionFound;
+}
+
 function handleCoinSelection() {
 	$('#coin').on('change', function(event) {
-		STORE.coin = $('#coin option:selected').text();
-		STORE.fsym = $('#coin option:selected').val();
-		fetchPriceData();
+		const currentValue = $('#coin').val();
+		if (isValidInput(currentValue)) {
+			const coinElements = currentValue.split('(');
+
+			$('.help')
+				.attr('hidden', true)
+				.text('');
+			$('#coin').removeClass('is-warning');
+			STORE.coin = coinElements[0];
+			STORE.fsym = coinElements[1].slice(0, -1);
+			fetchPriceData();
+		} else {
+			$('#coin')
+				.addClass('is-warning')
+				.val('');
+			$('.help')
+				.attr('hidden', false)
+				.text('Invalid input');
+		}
 	});
 }
 
@@ -214,6 +263,7 @@ function renderChart(rawData) {
 }
 
 function handleApp() {
+	fetchCoinList();
 	handleModal();
 	handleCoinSelection();
 	handleCurrencySelection();

@@ -12,19 +12,14 @@
     <header role="banner">
       <div class="columns is-centered is-vcentered has-text-centered">
         <div class="column is-narrow">
-          <form>
+          <!-- <form> -->
             <label class="label" for="coin">Cryptocurrency: </label>
             <div class="control">
-              <div class="select is-small">
-                <select id="coin" name="coin">
-                  <option value="" disabled selected>Select a coin</option>
-                  <option value="BTC">Bitcoin (BTC)</option>
-                  <option value="ETH">Ethereum (ETH)</option>
-                  <option value="XRP">Ripple (XRP)</option>
-                </select>
-              </div>
+              <input class="input" type="text" id="coin" list="js-coinlist" placeholder="e.g. Bitcoin (BTC)">
+              <p class="help is-warning" hidden></p>
+              <datalist id="js-coinlist"></datalist>
             </div>
-          </form>
+          <!-- </form> -->
         </div>
         <div class="column is-narrow">
           <div class="field is-grouped is-grouped-centered">
@@ -96,7 +91,7 @@
           <p>To get started, select which cryptocurrency you would like to investigate using the input field. Using the buttons, you may also choose the desired currency to compare with, as well as the desired range of time to chart.</p>
         </section>
         <footer class="modal-card-foot">
-          <p>Charts from the Crypt was built by <a class="has-text-warning" href="https://github.com/thomahau">Thomas Hauge</a>. The price data is sourced from the <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare API</a>, and the charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
+          <p>Charts from the Crypt was built by <a class="has-text-warning" href="https://github.com/thomahau">Thomas Hauge</a>. Data is sourced from the <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> and <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a> APIs. The charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
         </footer>
       </div>
     </div>
