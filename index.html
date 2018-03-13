@@ -13,10 +13,13 @@
       <div class="columns is-centered is-vcentered has-text-centered">
         <div class="column is-narrow">
           <!-- <form> -->
-            <label class="label" for="coin">Cryptocurrency: </label>
+            <label class="label" for="coin">
+              Cryptocurrency: <br />
+              <span class="help is-danger" hidden></spqn>
+            </label>
             <div class="control">
               <input class="input" type="text" id="coin" list="js-coinlist" placeholder="e.g. Bitcoin (BTC)">
-              <p class="help is-warning" hidden></p>
+              <!-- <p class="help is-warning" hidden></p> -->
               <datalist id="js-coinlist"></datalist>
             </div>
           <!-- </form> -->
@@ -24,7 +27,7 @@
         <div class="column is-narrow">
           <div class="field is-grouped is-grouped-centered">
             <p class="control">
-              <a class="button js-currency-btn is-warning is-active">
+              <a class="button js-currency-btn is-warning is-outlined">
                 <span class="icon">
                   <i class="fas fa-dollar-sign"></i>
                 </span>
@@ -70,7 +73,7 @@
               <a class="button js-range-btn">1Y</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn is-warning is-active">ALL</a>
+              <a class="button js-range-btn is-warning is-outlined">ALL</a>
             </p>
           </div>
         </div>
@@ -106,7 +109,7 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="js/highstock.js"></script>
-    <script src="js/theme_gray.js"></script>
+    <script src="js/theme.js"></script>
     <script src="js/app.js" type="text/javascript"></script>
   </body>
 </html>

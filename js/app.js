@@ -20,7 +20,6 @@ function fetchCoinList() {
 
 function renderDatalist(coinList) {
 	const datalist = $('#js-coinlist');
-	const input = $('#coin');
 
 	coinList.forEach(coin => {
 		// Create a new <option> element
@@ -45,45 +44,69 @@ function fetchPriceData() {
 	const now = Math.round(new Date().getTime() / 1000);
 	let url = CRYPTOCOMPARE_ENDPOINT;
 
-	if (STORE.range === '1D') {
-		// 24 hrs * 60 mins / 5 min aggregation = 288 data points
-		url += `histominute?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&limit=288&aggregate=5&toTs=${now}&extraParams=${APP_NAME}`;
-	} else if (STORE.range === '1W') {
-		// 7 days * 24 hrs = 168 data points
-		url += `histohour?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&limit=168&toTs=${now}&extraParams=${APP_NAME}`;
-	} else if (STORE.range === '1M') {
-		// 30 days * 24 hrs = 720 data points
-		url += `histohour?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&limit=720&toTs=${now}&extraParams=${APP_NAME}`;
-	} else if (STORE.range === '3M') {
-		// 3 months * 30 days * 24 hrs / 3 hr aggregation = 720 data points
-		url += `histohour?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&limit=720&aggregate=3&toTs=${now}&extraParams=${APP_NAME}`;
-	} else if (STORE.range === '6M') {
-		// 6 months * 30 days * 24 hrs / 6 hr aggregation = 720 data points
-		url += `histohour?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&limit=720&aggregate=6&toTs=${now}&extraParams=${APP_NAME}`;
-	} else if (STORE.range === '1Y') {
-		// 365 days = 365 data points
-		url += `histoday?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&limit=365&toTs=${now}&extraParams=${APP_NAME}`;
-	} else if (STORE.range === 'ALL') {
-		// all data points
-		url += `histoday?fsym=${STORE.fsym}&tsym=${
-			STORE.tsym
-		}&allData=true&extraParams=${APP_NAME}`;
+	switch (STORE.range) {
+		case '1D':
+			url += `histominute?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=288&aggregate=5&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '1W':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=168&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '1M':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=720&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '3M':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=720&aggregate=3&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '6M':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=720&aggregate=6&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '1Y':
+			url += `histoday?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=365&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		default:
+			url += `histoday?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&allData=true&extraParams=${APP_NAME}`;
 	}
 
 	$.getJSON(url, renderChart);
 	// .fail(showErr)
+}
+
+function handleCoinSelection() {
+	$('#coin').on('change', function(event) {
+		const currentValue = $(this).val();
+		if (isValidInput(currentValue)) {
+			const coinElements = currentValue.split('(');
+
+			$('.help')
+				.attr('hidden', true)
+				.text('');
+			$(this).removeClass('is-danger');
+			STORE.coin = coinElements[0];
+			STORE.fsym = coinElements[1].slice(0, -1);
+			fetchPriceData();
+		} else {
+			$(this)
+				.addClass('is-danger')
+				.val('');
+			$('.help')
+				.attr('hidden', false)
+				.text('Invalid input');
+		}
+	});
 }
 
 function isValidInput(input) {
@@ -100,49 +123,13 @@ function isValidInput(input) {
 	return optionFound;
 }
 
-function handleCoinSelection() {
-	$('#coin').on('change', function(event) {
-		const currentValue = $('#coin').val();
-		if (isValidInput(currentValue)) {
-			const coinElements = currentValue.split('(');
-
-			$('.help')
-				.attr('hidden', true)
-				.text('');
-			$('#coin').removeClass('is-warning');
-			STORE.coin = coinElements[0];
-			STORE.fsym = coinElements[1].slice(0, -1);
-			fetchPriceData();
-		} else {
-			$('#coin')
-				.addClass('is-warning')
-				.val('');
-			$('.help')
-				.attr('hidden', false)
-				.text('Invalid input');
-		}
-	});
-}
-
-function handleRangeSelection() {
-	$('.js-range-btn').click(function(event) {
-		if (!$(this).hasClass('is-active')) {
-			$('.js-range-btn.is-active').removeClass('is-warning is-active');
-			$(this).addClass('is-warning is-active');
-			STORE.range = $(this).text();
-
-			if (!$('#coin option:selected').attr('disabled')) {
-				fetchPriceData();
-			}
-		}
-	});
-}
-
 function handleCurrencySelection() {
 	$('.js-currency-btn').click(function(event) {
-		if (!$(this).hasClass('is-active')) {
-			$('.js-currency-btn.is-active').removeClass('is-warning is-active');
-			$(this).addClass('is-warning is-active');
+		if (!$(this).hasClass('is-outlined')) {
+			$('.js-currency-btn.is-outlined').removeClass(
+				'is-warning is-outlined'
+			);
+			$(this).addClass('is-warning is-outlined');
 			const iconName = $(this)
 				.find('svg')
 				.attr('data-icon');
@@ -166,6 +153,43 @@ function setCurrency(iconName) {
 		STORE.currency = 'BTC';
 		STORE.tsym = 'BTC';
 	}
+}
+
+function handleRangeSelection() {
+	$('.js-range-btn').click(function(event) {
+		if (!$(this).hasClass('is-outlined')) {
+			$('.js-range-btn.is-outlined').removeClass(
+				'is-warning is-outlined'
+			);
+			$(this).addClass('is-warning is-outlined');
+			STORE.range = $(this).text();
+
+			if (!$('#coin option:selected').attr('disabled')) {
+				fetchPriceData();
+			}
+		}
+	});
+}
+
+function renderChart(rawData) {
+	const data = rawData['Data'].map(item => {
+		return [item.time * 1000, item.close];
+	});
+	const latestPrice = data[data.length - 1][1];
+
+	let chartOptions = getBaseChartOptions();
+	chartOptions = customizeChartOptions(chartOptions, latestPrice);
+
+	$('.welcome-message').remove();
+	$('#js-chart-container').prop('hidden', false);
+
+	const chart = new Highcharts.stockChart(chartOptions);
+	const series = {
+		name: `Price (${STORE.tsym})`,
+		data: data
+	};
+
+	chart.addSeries(series);
 }
 
 function getBaseChartOptions() {
@@ -239,27 +263,6 @@ function customizeChartOptions(chartOptions, latestPrice) {
 	chartOptions.subtitle.text = `${STORE.currency}${latestPrice}`;
 
 	return chartOptions;
-}
-
-function renderChart(rawData) {
-	const data = rawData['Data'].map(item => {
-		return [item.time * 1000, item.close];
-	});
-	const latestPrice = data[data.length - 1][1];
-
-	let chartOptions = getBaseChartOptions();
-	chartOptions = customizeChartOptions(chartOptions, latestPrice);
-
-	$('.welcome-message').remove();
-	$('#js-chart-container').prop('hidden', false);
-
-	const chart = new Highcharts.stockChart(chartOptions);
-	const series = {
-		name: `Price (${STORE.tsym})`,
-		data: data
-	};
-
-	chart.addSeries(series);
 }
 
 function handleApp() {
