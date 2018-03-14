@@ -226,7 +226,7 @@ function getBaseChartOptions(latestPrice) {
 			text: `${STORE.coin}`
 		},
 		subtitle: {
-			text: `${STORE.currency}${latestPrice}`
+			text: STORE.currency === 'BTC' ? `${latestPrice} ${STORE.currency}` : `${STORE.currency}${latestPrice}`
 		},
 		xAxis: {
 			type: 'datetime',
@@ -236,7 +236,7 @@ function getBaseChartOptions(latestPrice) {
 			crosshair: true,
 			type: `${STORE.scale}`,
 			labels: {
-				format: `${STORE.currency}{value}`
+				format: STORE.currency === 'BTC' ? `{value} ${STORE.currency}` : `${STORE.currency}{value}`
 			},
 			offset: 50,
 			gridLineWidth: 2
@@ -249,8 +249,8 @@ function getBaseChartOptions(latestPrice) {
 			headerFormat: '',
 			pointFormat:
 				'<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-			// TODO: customize decimals
-			valueDecimals: 2
+			// TODO: customize decimals?
+			valueDecimals: 3
 		}
 	};
 
