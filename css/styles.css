@@ -23,10 +23,36 @@ body {
 	margin-top: 0;
 }
 
+.ui-menu {
+    background-color: white;
+    height: 10px;
+    width: 185px;
+    font-size: 16px;
+}
+
+.ui-menu-item {
+	background-color: white;
+	color: black;
+	padding-left: 10px;
+}
+
+.ui-menu-item:hover {
+	background-color: #C9B158;
+}
+
+.ui-autocomplete {
+	background-color: #C9B158;
+}
+
 main {
 	margin-top: 5rem;
 }
 
-.welcome-message {
+.welcome-message,
+.error-message {
 	padding-top: 5rem;
+}
+
+code {
+	background-color: black;
 }

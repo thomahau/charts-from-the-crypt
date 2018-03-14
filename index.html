@@ -13,45 +13,56 @@
     <header role="banner">
       <div class="columns is-centered is-vcentered has-text-centered">
         <div class="column is-narrow">
-          <!-- <form> -->
+          <form>
+
+            <!-- <div> -->
             <label class="label" for="coin">
               Cryptocurrency: <br />
-              <span class="help is-danger" hidden></span>
+              <span class="help is-danger" aria-live="assertive" hidden></span>
             </label>
             <div class="control">
-              <input class="input" type="text" id="coin" list="js-coinlist" placeholder="e.g. Bitcoin (BTC)">
-              <datalist id="js-coinlist"></datalist>
+              <input class="input" type="text" id="coin" name="coin" placeholder="e.g. Bitcoin (BTC)" />
             </div>
-          <!-- </form> -->
+            <!-- </div> -->
+
+            <!-- <label class="label" for="coin">
+              Cryptocurrency: <br />
+              <span class="help is-danger" aria-live="assertive" hidden></span>
+            </label>
+            <div class="control">
+              <input class="input js-combobox" type="text" id="coin" name="cryptocurrency" list="js-coinlist" data-combobox-prefix-class="combobox" placeholder="e.g. Bitcoin (BTC)" />
+              <datalist id="js-coinlist"></datalist>
+            </div> -->
+          </form>
         </div>
         <div class="column is-narrow">
           <div class="field is-grouped is-grouped-centered">
             <p class="control">
-              <a class="button js-currency-btn is-warning is-outlined">
+              <a class="button js-currency-btn is-warning is-outlined is-selected" aria-label="US Dollars" role="button">
                 <span class="icon">
                   <i class="fas fa-dollar-sign"></i>
                 </span>
               </a>
             </p>
             <p class="control">
-              <a class="button js-currency-btn">
+              <a class="button js-currency-btn" aria-label="Euros" role="button">
                 <span class="icon">
                   <i class="fas fa-euro-sign"></i>
                 </span>
               </a>
             </p>
             <p class="control">
-              <a class="button js-currency-btn">
+              <a class="button js-currency-btn" aria-label="Bitcoin" role="button">
                 <span class="icon">
                   <i class="fab fa-btc"></i>
                 </span>
               </a>
             </p>
             <p class="control">
-              <a class="button js-scale-btn is-warning is-outlined">Linear</a>
+              <a class="button js-scale-btn is-warning is-outlined" role="button">Linear</a>
             </p>
             <p class="control">
-              <a class="button js-scale-btn">Logarithmic</a>
+              <a class="button js-scale-btn" role="button">Logarithmic</a>
             </p>
           </div>
         </div>
@@ -71,49 +82,49 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item">1d</a>
-                <a class="dropdown-item">1w</a>
-                <a class="dropdown-item">1m</a>
-                <a class="dropdown-item">3m</a>
-                <a class="dropdown-item">6m</a>
-                <a class="dropdown-item">1y</a>
-                <a class="dropdown-item button is-warning has-text-left">All</a>
+                <a class="dropdown-item" aria-label="range 1 day">1d</a>
+                <a class="dropdown-item" aria-label="range 1 week">1w</a>
+                <a class="dropdown-item" aria-label="range 1 month">1m</a>
+                <a class="dropdown-item" aria-label="range 3 months">3m</a>
+                <a class="dropdown-item" aria-label="range 6 months">6m</a>
+                <a class="dropdown-item" aria-label="range 1 year">1y</a>
+                <a class="dropdown-item button is-warning has-text-left" aria-label="range all data">All</a>
               </div>
             </div>
           </div>
           <!-- Desktop range menu -->
           <div class="field is-grouped is-grouped-centered is-hidden-touch">
             <p class="control">
-              <a class="button js-range-btn">1d</a>
+              <a class="button js-range-btn" aria-label="range 1 day" role="button">1d</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn">1w</a>
+              <a class="button js-range-btn" aria-label="range 1 week" role="button">1w</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn">1m</a>
+              <a class="button js-range-btn" aria-label="range 1 month" role="button">1m</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn">3m</a>
+              <a class="button js-range-btn" aria-label="range 3 months" role="button">3m</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn">6m</a>
+              <a class="button js-range-btn" aria-label="range 6 months" role="button">6m</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn">1y</a>
+              <a class="button js-range-btn" aria-label="range 1 year" role="button">1y</a>
             </p>
             <p class="control">
-              <a class="button js-range-btn is-warning is-outlined">All</a>
+              <a class="button js-range-btn is-warning is-outlined" aria-label="range all data" role="button">All</a>
             </p>
           </div>
         </div>
 
         <div class="column is-narrow">
-          <a class="button is-warning is-outlined js-about">Help</a>
+          <a class="button is-warning is-outlined js-about" role="button">Help</a>
         </div>
       </div>
     </header>
 
-    <div class="modal">
+    <div class="modal" aria-live="assertive">
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
@@ -134,10 +145,11 @@
         <h1 class="title">Charts from the Crypt</h1>
         <p class="subtitle">Interactive price history charts for various cryptocurrencies.</p>
       </div>
-      <div class="container" id="js-chart-container" hidden></div>
+      <div class="container" id="js-chart-container" aria-live="assertive" hidden></div>
     </main>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="js/highstock.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/app.js" type="text/javascript"></script>

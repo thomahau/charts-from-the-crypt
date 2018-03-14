@@ -16,19 +16,29 @@ const STORE = {
 
 function fetchCoinList() {
 	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=100';
-	$.getJSON(url, renderDatalist);
+
+	$.getJSON(url, renderDatalist)
+		.fail(showErr);
 }
 
 function renderDatalist(coinList) {
-	const datalist = $('#js-coinlist');
-
-	coinList.forEach(coin => {
-		// Create a new <option> element
-		let option = `
-		<option value="${coin.name} (${coin.symbol})">`;
-		// Add the <option> element to datalist
-		datalist.append(option);
+	const availableCoins = coinList.map(coin => {
+		return `${coin.name} (${coin.symbol})`;
 	});
+
+	$('#coin').autocomplete({
+		source: availableCoins
+	});
+
+	// const datalist = $('#js-coinlist');
+
+	// coinList.forEach(coin => {
+	// 	// Create a new <option> element
+	// 	let option = `
+	// 	<option value="${coin.name} (${coin.symbol})">`;
+	// 	// Add the <option> element to datalist
+	// 	datalist.append(option);
+	// });
 }
 
 function handleModal() {
@@ -50,7 +60,7 @@ function handleCoinSelection() {
 			$('.help')
 				.attr('hidden', true)
 				.text('');
-			$(this).removeClass('is-danger');
+			$(this).removeClass('is-danger').val('');
 			STORE.coin = coinElements[0];
 			STORE.fsym = coinElements[1].slice(0, -1);
 			fetchPriceData();
@@ -82,17 +92,25 @@ function isValidInput(input) {
 function handleCurrencySelection() {
 	$('.js-currency-btn').click(function(event) {
 		if (!$(this).hasClass('is-outlined')) {
+			// De-select other currency
+			// const previousCurrencySelection = $('.js-currency-btn.is-outlined');
+			// const previousCurrencyIconTitle = previousCurrencySelection.find('svg').attr('title').split(' ');
+			// previousCurrencySelection.find('svg').attr('title', `${previousCurrencyIconTitle[0]}`);
 			$('.js-currency-btn.is-outlined').removeClass(
 				'is-warning is-outlined'
 			);
+			// Select new currency
 			$(this).addClass('is-warning is-outlined');
+			// const currentCurrencyIconTitle = $(this).find('svg').attr('title');
+			// $(this).find('svg').attr('title', `${currentCurrencyIconTitle} selected`);
+
 			const iconName = $(this)
 				.find('svg')
 				.attr('data-icon');
 
 			setCurrency(iconName);
 
-			if (isValidInput($('#coin').val())) {
+			if (STORE.fsym) {
 				fetchPriceData();
 			}
 		}
@@ -119,7 +137,7 @@ function handleScaleSelection() {
 			$(this).addClass('is-warning is-outlined');
 			STORE.scale = $(this).text().toLowerCase();
 
-			if (isValidInput($('#coin').val())) {
+			if (STORE.fsym) {
 				fetchPriceData();
 			}
 		}
@@ -139,7 +157,7 @@ function handleRangeSelection() {
 			$('.js-selected-range').text(`Range: ${STORE.range}`);
 			$('.dropdown').removeClass('is-active');
 
-			if (isValidInput($('#coin').val())) {
+			if (STORE.fsym) {
 				fetchPriceData();
 			}
 		}
@@ -153,7 +171,7 @@ function handleRangeSelection() {
 			$(this).addClass('is-warning is-outlined');
 			STORE.range = $(this).text();
 
-			if (isValidInput($('#coin').val())) {
+			if (STORE.fsym) {
 				fetchPriceData();
 			}
 		}
@@ -201,29 +219,33 @@ function fetchPriceData() {
 			}&allData=true&extraParams=${APP_NAME}`;
 	}
 
-	$.getJSON(url, renderChart);
-	// .fail(showErr)
+	$.getJSON(url, renderChart)
+		.fail(showErr);
 }
 
 function renderChart(rawData) {
-	const data = rawData['Data'].map(dataPoint => {
+	if (rawData.Response === 'Error') {
+		showErr(rawData.Message);
+	} else {
+		const data = rawData['Data'].map(dataPoint => {
 		return [dataPoint.time * 1000, dataPoint.close];
-	});
-	const latestPrice = data[data.length - 1][1];
+		});
+		const latestPrice = data[data.length - 1][1];
 
-	let chartOptions = getBaseChartOptions(latestPrice);
-	chartOptions = addRangeChartOptions(chartOptions);
+		let chartOptions = getBaseChartOptions(latestPrice);
+		chartOptions = addRangeChartOptions(chartOptions);
 
-	$('.welcome-message').remove();
-	$('#js-chart-container').prop('hidden', false);
+		$('.welcome-message, .error-message').remove();
+		$('#js-chart-container').prop('hidden', false);
 
-	const chart = new Highcharts.stockChart(chartOptions);
-	const series = {
-		name: `Price (${STORE.tsym})`,
-		data: data
-	};
+		const chart = new Highcharts.stockChart(chartOptions);
+		const series = {
+			name: `Price (${STORE.tsym})`,
+			data: data
+		};
 
-	chart.addSeries(series);
+		chart.addSeries(series);
+	}
 }
 
 function getBaseChartOptions(latestPrice) {
@@ -241,10 +263,10 @@ function getBaseChartOptions(latestPrice) {
 			enabled: false
 		},
 		title: {
-			text: `${STORE.coin}`
+			text: `${STORE.coin} (${STORE.fsym})`
 		},
 		subtitle: {
-			text: STORE.currency === 'BTC' ? `${latestPrice} ${STORE.currency}` : `${STORE.currency}${latestPrice}`
+			text: STORE.currency === 'BTC' ? `Current price: ${latestPrice} ${STORE.currency}` : `Current price: ${STORE.currency}${latestPrice}`
 		},
 		xAxis: {
 			type: 'datetime',
@@ -295,6 +317,18 @@ function addRangeChartOptions(chartOptions) {
 	chartOptions.tooltip.headerFormat = tooltipHeaderFormat;
 
 	return chartOptions;
+}
+
+function showErr(err) {
+	const errMsg =
+		`<div class="container has-text-centered error-message" aria-live="assertive">
+			<p>Something went wrong collecting your data! Here's what we know:</p>
+			<code>${err}</code>
+		</div>`;
+
+	$('.welcome-message').remove();
+	$('#js-chart-container').empty();
+	$(errMsg).insertBefore('#js-chart-container');
 }
 
 function handleApp() {

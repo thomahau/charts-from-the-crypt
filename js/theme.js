@@ -35,7 +35,7 @@ Highcharts.theme = {
 		style: {
 			color: '#FFF',
 			font:
-				'16px Lucida Grande, Lucida Sans Unicode,' +
+				'20px Lucida Grande, Lucida Sans Unicode,' +
 				' Verdana, Arial, Helvetica, sans-serif'
 		}
 	},
@@ -43,7 +43,7 @@ Highcharts.theme = {
 		style: {
 			color: '#DDD',
 			font:
-				'12px Lucida Grande, Lucida Sans Unicode,' +
+				'16px Lucida Grande, Lucida Sans Unicode,' +
 				' Verdana, Arial, Helvetica, sans-serif'
 		}
 	},
