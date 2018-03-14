@@ -10,7 +10,8 @@ const STORE = {
 	// Default starting values
 	currency: '$',
 	tsym: 'USD',
-	range: 'ALL'
+	scale: 'linear',
+	range: 'All'
 };
 
 function fetchCoinList() {
@@ -38,51 +39,6 @@ function handleModal() {
 	$('.delete').click(function(event) {
 		$('.modal').removeClass('is-active');
 	});
-}
-
-function fetchPriceData() {
-	const now = Math.round(new Date().getTime() / 1000);
-	let url = CRYPTOCOMPARE_ENDPOINT;
-
-	switch (STORE.range) {
-		case '1D':
-			url += `histominute?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=288&aggregate=5&toTs=${now}&extraParams=${APP_NAME}`;
-			break;
-		case '1W':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=168&toTs=${now}&extraParams=${APP_NAME}`;
-			break;
-		case '1M':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=720&toTs=${now}&extraParams=${APP_NAME}`;
-			break;
-		case '3M':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=720&aggregate=3&toTs=${now}&extraParams=${APP_NAME}`;
-			break;
-		case '6M':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=720&aggregate=6&toTs=${now}&extraParams=${APP_NAME}`;
-			break;
-		case '1Y':
-			url += `histoday?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=365&toTs=${now}&extraParams=${APP_NAME}`;
-			break;
-		default:
-			url += `histoday?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&allData=true&extraParams=${APP_NAME}`;
-	}
-
-	$.getJSON(url, renderChart);
-	// .fail(showErr)
 }
 
 function handleCoinSelection() {
@@ -133,9 +89,10 @@ function handleCurrencySelection() {
 			const iconName = $(this)
 				.find('svg')
 				.attr('data-icon');
+
 			setCurrency(iconName);
 
-			if (!$('#coin option:selected').attr('disabled')) {
+			if (isValidInput($('#coin').val())) {
 				fetchPriceData();
 			}
 		}
@@ -155,6 +112,20 @@ function setCurrency(iconName) {
 	}
 }
 
+function handleScaleSelection() {
+	$('.js-scale-btn').click(function(event) {
+		if (!$(this).hasClass('is-outlined')) {
+			$('.js-scale-btn.is-outlined').removeClass('is-warning is-outlined');
+			$(this).addClass('is-warning is-outlined');
+			STORE.scale = $(this).text().toLowerCase();
+
+			if (isValidInput($('#coin').val())) {
+				fetchPriceData();
+			}
+		}
+	});
+}
+
 function handleRangeSelection() {
 	$('.js-range-btn').click(function(event) {
 		if (!$(this).hasClass('is-outlined')) {
@@ -164,21 +135,66 @@ function handleRangeSelection() {
 			$(this).addClass('is-warning is-outlined');
 			STORE.range = $(this).text();
 
-			if (!$('#coin option:selected').attr('disabled')) {
+			if (isValidInput($('#coin').val())) {
 				fetchPriceData();
 			}
 		}
 	});
 }
 
+function fetchPriceData() {
+	const now = Math.round(new Date().getTime() / 1000);
+	let url = CRYPTOCOMPARE_ENDPOINT;
+
+	switch (STORE.range) {
+		case '1d':
+			url += `histominute?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=288&aggregate=5&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '1w':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=168&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '1m':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=720&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '3m':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=720&aggregate=3&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '6m':
+			url += `histohour?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=720&aggregate=6&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		case '1y':
+			url += `histoday?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&limit=365&toTs=${now}&extraParams=${APP_NAME}`;
+			break;
+		default:
+			url += `histoday?fsym=${STORE.fsym}&tsym=${
+				STORE.tsym
+			}&allData=true&extraParams=${APP_NAME}`;
+	}
+
+	$.getJSON(url, renderChart);
+	// .fail(showErr)
+}
+
 function renderChart(rawData) {
-	const data = rawData['Data'].map(item => {
-		return [item.time * 1000, item.close];
+	const data = rawData['Data'].map(dataPoint => {
+		return [dataPoint.time * 1000, dataPoint.close];
 	});
 	const latestPrice = data[data.length - 1][1];
 
-	let chartOptions = getBaseChartOptions();
-	chartOptions = customizeChartOptions(chartOptions, latestPrice);
+	let chartOptions = getBaseChartOptions(latestPrice);
+	chartOptions = addRangeChartOptions(chartOptions);
 
 	$('.welcome-message').remove();
 	$('#js-chart-container').prop('hidden', false);
@@ -192,7 +208,7 @@ function renderChart(rawData) {
 	chart.addSeries(series);
 }
 
-function getBaseChartOptions() {
+function getBaseChartOptions(latestPrice) {
 	let chartOptions = {
 		chart: {
 			renderTo: 'js-chart-container'
@@ -207,18 +223,18 @@ function getBaseChartOptions() {
 			enabled: false
 		},
 		title: {
-			text: ''
+			text: `${STORE.coin}`
 		},
 		subtitle: {
-			text: ''
+			text: `${STORE.currency}${latestPrice}`
 		},
 		xAxis: {
 			type: 'datetime',
 			labels: {}
 		},
 		yAxis: {
-			// TODO: type: {} linear or logarithmic
 			crosshair: true,
+			type: `${STORE.scale}`,
 			labels: {
 				format: `${STORE.currency}{value}`
 			},
@@ -241,17 +257,17 @@ function getBaseChartOptions() {
 	return chartOptions;
 }
 
-function customizeChartOptions(chartOptions, latestPrice) {
+function addRangeChartOptions(chartOptions) {
 	let xAxisLabelFormat = '{value:%d. %b}';
 	let tooltipHeaderFormat =
 		'<span style="font-size: 10px">{point.x:%A, %b %d, %Y, %k:%M}</span><br/>';
 
-	if (STORE.range === '1D') {
+	if (STORE.range === '1d') {
 		xAxisLabelFormat = '{value:%k:%M}';
-	} else if (STORE.range === '1Y') {
+	} else if (STORE.range === '1y') {
 		tooltipHeaderFormat =
 			'<span style="font-size: 10px">{point.x:%A, %b %d, %Y}</span><br/>';
-	} else if (STORE.range === 'ALL') {
+	} else if (STORE.range === 'All') {
 		xAxisLabelFormat = '{value:%b %Y}';
 		tooltipHeaderFormat =
 			'<span style="font-size: 10px">{point.x:%A, %b %d, %Y}</span><br/>';
@@ -259,8 +275,6 @@ function customizeChartOptions(chartOptions, latestPrice) {
 
 	chartOptions.xAxis.labels.format = xAxisLabelFormat;
 	chartOptions.tooltip.headerFormat = tooltipHeaderFormat;
-	chartOptions.title.text = STORE.coin;
-	chartOptions.subtitle.text = `${STORE.currency}${latestPrice}`;
 
 	return chartOptions;
 }
@@ -270,6 +284,7 @@ function handleApp() {
 	handleModal();
 	handleCoinSelection();
 	handleCurrencySelection();
+	handleScaleSelection();
 	handleRangeSelection();
 }
 
