@@ -127,6 +127,24 @@ function handleScaleSelection() {
 }
 
 function handleRangeSelection() {
+	$('.dropdown-trigger').click(function(event) {
+		$(this).parent().toggleClass('is-active');
+	});
+
+	$('.dropdown-item').click(function(event) {
+		if (!$(this).hasClass('is-warning')) {
+			$('.dropdown-item.is-warning').removeClass('button is-warning has-text-left');
+			$(this).addClass('button is-warning has-text-left');
+			STORE.range = $(this).text();
+			$('.js-selected-range').text(`Range: ${STORE.range}`);
+			$('.dropdown').removeClass('is-active');
+
+			if (isValidInput($('#coin').val())) {
+				fetchPriceData();
+			}
+		}
+	});
+
 	$('.js-range-btn').click(function(event) {
 		if (!$(this).hasClass('is-outlined')) {
 			$('.js-range-btn.is-outlined').removeClass(
