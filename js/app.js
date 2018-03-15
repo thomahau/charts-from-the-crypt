@@ -32,7 +32,7 @@ function populateSearchOptions(rawData) {
 }
 
 function handleModal() {
-	$('.js-about').click(function(event) {
+	$('body').on('click', '.js-help-btn', function(event) {
 		$('.modal').addClass('is-active');
 	});
 
@@ -233,6 +233,10 @@ function renderChart(rawData) {
 		$('.welcome-message, .error-message').remove();
 		$('#js-chart-container').prop('hidden', false);
 
+		if (!$('.js-help-btn').length) {
+			renderBannerHelpButton();
+		}
+
 		const chart = new Highcharts.stockChart(chartOptions);
 		const series = {
 			name: `Price (${STORE.tsym})`,
@@ -320,6 +324,15 @@ function addRangeChartOptions(chartOptions) {
 	chartOptions.tooltip.headerFormat = tooltipHeaderFormat;
 
 	return chartOptions;
+}
+
+function renderBannerHelpButton() {
+	const bannerHelpButton = `
+		<div class="column is-narrow">
+          <a class="button is-warning is-outlined js-help-btn" role="button">Help</a>
+        </div>`;
+
+	$('.js-header-second-level').append(bannerHelpButton);
 }
 
 function showErr(err) {

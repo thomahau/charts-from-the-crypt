@@ -19,6 +19,10 @@ body {
 	max-height: 38px;
 }
 
+.range-label {
+	margin-right: 8px;
+}
+
 .input:focus {
 	border: 1.3px solid #c9b158;
 }

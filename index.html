@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="columns is-centered is-mobile">
+      <div class="columns is-centered is-mobile js-header-second-level">
         <div class="column is-narrow">
           <!-- Mobile range menu -->
           <div class="dropdown is-hidden-desktop">
@@ -70,44 +70,42 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item" aria-label="range 1 day">1d</a>
-                <a class="dropdown-item" aria-label="range 1 week">1w</a>
-                <a class="dropdown-item" aria-label="range 1 month">1m</a>
-                <a class="dropdown-item" aria-label="range 3 months">3m</a>
-                <a class="dropdown-item" aria-label="range 6 months">6m</a>
-                <a class="dropdown-item" aria-label="range 1 year">1y</a>
-                <a class="dropdown-item button is-warning has-text-left" aria-label="range all data">All</a>
+                <a class="dropdown-item" aria-label="1 day">1d</a>
+                <a class="dropdown-item" aria-label="1 week">1w</a>
+                <a class="dropdown-item" aria-label="1 month">1m</a>
+                <a class="dropdown-item" aria-label="3 months">3m</a>
+                <a class="dropdown-item" aria-label="6 months">6m</a>
+                <a class="dropdown-item" aria-label="1 year">1y</a>
+                <a class="dropdown-item button is-warning has-text-left" aria-label="all data">All</a>
               </div>
             </div>
           </div>
           <!-- Desktop range menu -->
           <div class="field is-grouped is-grouped-centered is-hidden-touch">
-            <p class="control">
-              <a class="button js-range-btn" aria-label="range 1 day" role="button">1d</a>
-            </p>
-            <p class="control">
-              <a class="button js-range-btn" aria-label="range 1 week" role="button">1w</a>
-            </p>
-            <p class="control">
-              <a class="button js-range-btn" aria-label="range 1 month" role="button">1m</a>
-            </p>
-            <p class="control">
-              <a class="button js-range-btn" aria-label="range 3 months" role="button">3m</a>
-            </p>
-            <p class="control">
-              <a class="button js-range-btn" aria-label="range 6 months" role="button">6m</a>
-            </p>
-            <p class="control">
-              <a class="button js-range-btn" aria-label="range 1 year" role="button">1y</a>
-            </p>
-            <p class="control">
-              <a class="button js-range-btn is-warning is-outlined" aria-label="range all data" role="button">All</a>
-            </p>
+            <label class="label range-label">Range:</label>
+              <p class="control">
+                <a class="button js-range-btn" aria-label="Range: 1 day" role="button">1d</a>
+              </p>
+              <p class="control">
+                <a class="button js-range-btn" aria-label="Range: 1 week" role="button">1w</a>
+              </p>
+              <p class="control">
+                <a class="button js-range-btn" aria-label="Range: 1 month" role="button">1m</a>
+              </p>
+              <p class="control">
+                <a class="button js-range-btn" aria-label="Range: 3 months" role="button">3m</a>
+              </p>
+              <p class="control">
+                <a class="button js-range-btn" aria-label="Range: 6 months" role="button">6m</a>
+              </p>
+              <p class="control">
+                <a class="button js-range-btn" aria-label="Range: 1 year" role="button">1y</a>
+              </p>
+              <p class="control">
+                <a class="button js-range-btn is-warning is-outlined" aria-label="Range: all data" role="button">All</a>
+              </p>
+            <!-- </label> -->
           </div>
-        </div>
-
-        <div class="column is-narrow">
-          <a class="button is-warning is-outlined js-about" role="button">Help</a>
         </div>
       </div>
     </header>
@@ -124,7 +122,7 @@
           Use the buttons to choose the desired currency to compare with, the desired range of time to chart, and whether you would like a linear or a logarithmic price scale.</p>
         </section>
         <footer class="modal-card-foot">
-          <p>You can find the source code for this app <a class="has-text-warning" href="https://github.com/thomahau/charts-from-the-crypt">here</a>. Data is sourced from the <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a> and <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> APIs. The charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
+          <p>You can find the source code for this app <a class="has-text-warning" href="https://github.com/thomahau/charts-from-the-crypt">here</a>. Data comes courtesy of the <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a> and <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> APIs. The charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
         </footer>
       </div>
     </div>
@@ -132,9 +130,10 @@
     <main role="main">
       <div class="container has-text-centered welcome-message">
         <h1 class="title">Charts from the Crypt</h1>
-        <p class="subtitle">Interactive price history charts for various cryptocurrencies.</p>
+        <p class="subtitle">Interactive price history charts for various cryptocurrencies</p>
+        <a class="button is-warning is-outlined js-help-btn" role="button">Getting started</a>
       </div>
-      <div class="container" id="js-chart-container" aria-live="assertive" hidden></div>
+      <div class="container" id="js-chart-container" aria-live="polite" hidden></div>
     </main>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
