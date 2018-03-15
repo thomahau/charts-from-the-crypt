@@ -5,9 +5,9 @@ const CRYPTOCOMPARE_ENDPOINT = 'https://min-api.cryptocompare.com/data/';
 const APP_NAME = 'charts_from_the_crypt';
 
 const STORE = {
+	availableCoins: [],
 	coin: '',
 	fsym: '',
-	// Default starting values
 	currency: '$',
 	tsym: 'USD',
 	scale: 'linear',
@@ -15,30 +15,20 @@ const STORE = {
 };
 
 function fetchCoinList() {
-	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=100';
+	// Returns current top 200 cryptocurrencies by marketcap
+	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=200';
 
-	$.getJSON(url, renderDatalist)
-		.fail(showErr);
+	$.getJSON(url, populateSearchOptions).fail(showErr);
 }
 
-function renderDatalist(coinList) {
-	const availableCoins = coinList.map(coin => {
+function populateSearchOptions(rawData) {
+	STORE.availableCoins = rawData.map(coin => {
 		return `${coin.name} (${coin.symbol})`;
 	});
 
 	$('#coin').autocomplete({
-		source: availableCoins
+		source: STORE.availableCoins
 	});
-
-	// const datalist = $('#js-coinlist');
-
-	// coinList.forEach(coin => {
-	// 	// Create a new <option> element
-	// 	let option = `
-	// 	<option value="${coin.name} (${coin.symbol})">`;
-	// 	// Add the <option> element to datalist
-	// 	datalist.append(option);
-	// });
 }
 
 function handleModal() {
@@ -52,20 +42,32 @@ function handleModal() {
 }
 
 function handleCoinSelection() {
-	$('#coin').on('change', function(event) {
-		const currentValue = $(this).val();
-		if (isValidInput(currentValue)) {
-			const coinElements = currentValue.split('(');
+	// When user makes a selection from dropdown; fill value of input field and submit form
+	$('#coin').on('autocompleteselect', function(event, ui) {
+		$(this).val(ui.item.value);
+		$('.coin-form').submit();
+	});
 
+	$('.coin-form').submit(function(event) {
+		event.preventDefault();
+		const userInput = $(this)
+			.find('#coin')
+			.val();
+		// Validate user input and display help text if not valid
+		if (isValidInput(userInput)) {
+			const coinElements = userInput.split('(');
+
+			$('#coin').removeClass('is-danger');
 			$('.help')
 				.attr('hidden', true)
 				.text('');
-			$(this).removeClass('is-danger').val('');
+
 			STORE.coin = coinElements[0];
 			STORE.fsym = coinElements[1].slice(0, -1);
+
 			fetchPriceData();
 		} else {
-			$(this)
+			$('#coin')
 				.addClass('is-danger')
 				.val('');
 			$('.help')
@@ -75,35 +77,27 @@ function handleCoinSelection() {
 	});
 }
 
-function isValidInput(input) {
-	const datalistOptions = $('#js-coinlist').find('option');
-	let optionFound = false;
+function isValidInput(userInput) {
+	let validInput = false;
 
-	datalistOptions.each(function() {
-		let optionValue = $(this).attr('value');
-		if (optionValue === input) {
-			optionFound = true;
-			return optionFound;
+	STORE.availableCoins.forEach(coin => {
+		if (userInput === coin) {
+			validInput = true;
+			return validInput;
 		}
 	});
-	return optionFound;
+	return validInput;
 }
 
 function handleCurrencySelection() {
 	$('.js-currency-btn').click(function(event) {
 		if (!$(this).hasClass('is-outlined')) {
 			// De-select other currency
-			// const previousCurrencySelection = $('.js-currency-btn.is-outlined');
-			// const previousCurrencyIconTitle = previousCurrencySelection.find('svg').attr('title').split(' ');
-			// previousCurrencySelection.find('svg').attr('title', `${previousCurrencyIconTitle[0]}`);
 			$('.js-currency-btn.is-outlined').removeClass(
 				'is-warning is-outlined'
 			);
 			// Select new currency
 			$(this).addClass('is-warning is-outlined');
-			// const currentCurrencyIconTitle = $(this).find('svg').attr('title');
-			// $(this).find('svg').attr('title', `${currentCurrencyIconTitle} selected`);
-
 			const iconName = $(this)
 				.find('svg')
 				.attr('data-icon');
@@ -133,9 +127,15 @@ function setCurrency(iconName) {
 function handleScaleSelection() {
 	$('.js-scale-btn').click(function(event) {
 		if (!$(this).hasClass('is-outlined')) {
-			$('.js-scale-btn.is-outlined').removeClass('is-warning is-outlined');
+			// De-select other price scale
+			$('.js-scale-btn.is-outlined').removeClass(
+				'is-warning is-outlined'
+			);
+			// Select new price scale
 			$(this).addClass('is-warning is-outlined');
-			STORE.scale = $(this).text().toLowerCase();
+			STORE.scale = $(this)
+				.text()
+				.toLowerCase();
 
 			if (STORE.fsym) {
 				fetchPriceData();
@@ -146,12 +146,18 @@ function handleScaleSelection() {
 
 function handleRangeSelection() {
 	$('.dropdown-trigger').click(function(event) {
-		$(this).parent().toggleClass('is-active');
+		$(this)
+			.parent()
+			.toggleClass('is-active');
 	});
 
 	$('.dropdown-item').click(function(event) {
 		if (!$(this).hasClass('is-warning')) {
-			$('.dropdown-item.is-warning').removeClass('button is-warning has-text-left');
+			// De-select other range, mobile view
+			$('.dropdown-item.is-warning').removeClass(
+				'button is-warning has-text-left'
+			);
+			// Select new range, mobile view
 			$(this).addClass('button is-warning has-text-left');
 			STORE.range = $(this).text();
 			$('.js-selected-range').text(`Range: ${STORE.range}`);
@@ -165,9 +171,11 @@ function handleRangeSelection() {
 
 	$('.js-range-btn').click(function(event) {
 		if (!$(this).hasClass('is-outlined')) {
+			// De-select other range, desktop view
 			$('.js-range-btn.is-outlined').removeClass(
 				'is-warning is-outlined'
 			);
+			// Select new range, desktop view
 			$(this).addClass('is-warning is-outlined');
 			STORE.range = $(this).text();
 
@@ -181,46 +189,33 @@ function handleRangeSelection() {
 function fetchPriceData() {
 	const now = Math.round(new Date().getTime() / 1000);
 	let url = CRYPTOCOMPARE_ENDPOINT;
-
+	// Build CryptoCompare API query based on stored range
 	switch (STORE.range) {
 		case '1d':
-			url += `histominute?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=288&aggregate=5&toTs=${now}&extraParams=${APP_NAME}`;
+			url += `histominute?limit=288&aggregate=5&toTs=${now}`;
 			break;
 		case '1w':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=168&toTs=${now}&extraParams=${APP_NAME}`;
+			url += `histohour?limit=168&toTs=${now}`;
 			break;
 		case '1m':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=720&toTs=${now}&extraParams=${APP_NAME}`;
+			url += `histohour?limit=720&toTs=${now}`;
 			break;
 		case '3m':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=720&aggregate=3&toTs=${now}&extraParams=${APP_NAME}`;
+			url += `histohour?limit=720&aggregate=3&toTs=${now}`;
 			break;
 		case '6m':
-			url += `histohour?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=720&aggregate=6&toTs=${now}&extraParams=${APP_NAME}`;
+			url += `histohour?limit=720&aggregate=6&toTs=${now}`;
 			break;
 		case '1y':
-			url += `histoday?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&limit=365&toTs=${now}&extraParams=${APP_NAME}`;
+			url += `histoday?limit=365&toTs=${now}`;
 			break;
 		default:
-			url += `histoday?fsym=${STORE.fsym}&tsym=${
-				STORE.tsym
-			}&allData=true&extraParams=${APP_NAME}`;
+			url += `histoday?allData=true`;
 	}
 
-	$.getJSON(url, renderChart)
-		.fail(showErr);
+	url += `&fsym=${STORE.fsym}&tsym=${STORE.tsym}&extraParams=${APP_NAME}`;
+
+	$.getJSON(url, renderChart).fail(showErr);
 }
 
 function renderChart(rawData) {
@@ -228,7 +223,7 @@ function renderChart(rawData) {
 		showErr(rawData.Message);
 	} else {
 		const data = rawData['Data'].map(dataPoint => {
-		return [dataPoint.time * 1000, dataPoint.close];
+			return [dataPoint.time * 1000, dataPoint.close];
 		});
 		const latestPrice = data[data.length - 1][1];
 
@@ -243,7 +238,6 @@ function renderChart(rawData) {
 			name: `Price (${STORE.tsym})`,
 			data: data
 		};
-
 		chart.addSeries(series);
 	}
 }
@@ -251,7 +245,11 @@ function renderChart(rawData) {
 function getBaseChartOptions(latestPrice) {
 	let chartOptions = {
 		chart: {
-			renderTo: 'js-chart-container'
+			renderTo: 'js-chart-container',
+			// Description for screen readers
+			description: `${STORE.scale} price history chart for ${
+				STORE.coin
+			}, denominated in ${STORE.tsym}`
 		},
 		navigator: {
 			enabled: false
@@ -266,7 +264,10 @@ function getBaseChartOptions(latestPrice) {
 			text: `${STORE.coin} (${STORE.fsym})`
 		},
 		subtitle: {
-			text: STORE.currency === 'BTC' ? `Current price: ${latestPrice} ${STORE.currency}` : `Current price: ${STORE.currency}${latestPrice}`
+			text:
+				STORE.currency === 'BTC'
+					? `Current price: ${latestPrice} ${STORE.currency}`
+					: `Current price: ${STORE.currency}${latestPrice}`
 		},
 		xAxis: {
 			type: 'datetime',
@@ -276,7 +277,10 @@ function getBaseChartOptions(latestPrice) {
 			crosshair: true,
 			type: `${STORE.scale}`,
 			labels: {
-				format: STORE.currency === 'BTC' ? `{value} ${STORE.currency}` : `${STORE.currency}{value}`
+				format:
+					STORE.currency === 'BTC'
+						? `{value} ${STORE.currency}`
+						: `${STORE.currency}{value}`
 			},
 			offset: 50,
 			gridLineWidth: 2
@@ -293,7 +297,6 @@ function getBaseChartOptions(latestPrice) {
 			valueDecimals: 3
 		}
 	};
-
 	return chartOptions;
 }
 
@@ -320,13 +323,13 @@ function addRangeChartOptions(chartOptions) {
 }
 
 function showErr(err) {
-	const errMsg =
-		`<div class="container has-text-centered error-message" aria-live="assertive">
+	const errMsg = `
+		<div class="container has-text-centered error-message" aria-live="assertive">
 			<p>Something went wrong collecting your data! Here's what we know:</p>
 			<code>${err}</code>
 		</div>`;
 
-	$('.welcome-message').remove();
+	$('.welcome-message, .error-message').remove();
 	$('#js-chart-container').empty();
 	$(errMsg).insertBefore('#js-chart-container');
 }

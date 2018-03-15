@@ -6,33 +6,21 @@
     <meta name="description" content="Interactive price history charts for various cryptocurrencies">
     <title>Charts from the Crypt</title>
     <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/cyborg/bulmaswatch.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
     <link rel="stylesheet" href="css/styles.css" type="text/css">
-    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
   </head>
   <body>
     <header role="banner">
       <div class="columns is-centered is-vcentered has-text-centered">
         <div class="column is-narrow">
-          <form>
-
-            <!-- <div> -->
+          <form class="coin-form">
             <label class="label" for="coin">
               Cryptocurrency: <br />
-              <span class="help is-danger" aria-live="assertive" hidden></span>
+              <span class="help is-danger" aria-live="assertive" role="alert" hidden></span>
             </label>
             <div class="control">
-              <input class="input" type="text" id="coin" name="coin" placeholder="e.g. Bitcoin (BTC)" />
+              <input class="input" type="search" id="coin" name="coin" placeholder="e.g. Bitcoin (BTC)" required />
             </div>
-            <!-- </div> -->
-
-            <!-- <label class="label" for="coin">
-              Cryptocurrency: <br />
-              <span class="help is-danger" aria-live="assertive" hidden></span>
-            </label>
-            <div class="control">
-              <input class="input js-combobox" type="text" id="coin" name="cryptocurrency" list="js-coinlist" data-combobox-prefix-class="combobox" placeholder="e.g. Bitcoin (BTC)" />
-              <datalist id="js-coinlist"></datalist>
-            </div> -->
           </form>
         </div>
         <div class="column is-narrow">
@@ -132,10 +120,11 @@
           <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-          <p>To get started, select which cryptocurrency you would like to investigate using the input field. Using the buttons, you may also choose the desired currency to compare with, as well as the desired range of time to chart.</p>
+          <p>Select which cryptocurrency you would like to investigate with the input field. You may choose between any of the current top 200.<br /><br />
+          Use the buttons to choose the desired currency to compare with, the desired range of time to chart, and whether you would like a linear or a logarithmic price scale.</p>
         </section>
         <footer class="modal-card-foot">
-          <p>Charts from the Crypt was built by <a class="has-text-warning" href="https://github.com/thomahau">Thomas Hauge</a>. Data is sourced from the <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> and <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a> APIs. The charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
+          <p>You can find the source code for this app <a class="has-text-warning" href="https://github.com/thomahau/charts-from-the-crypt">here</a>. Data is sourced from the <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a> and <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> APIs. The charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
         </footer>
       </div>
     </div>
@@ -148,10 +137,12 @@
       <div class="container" id="js-chart-container" aria-live="assertive" hidden></div>
     </main>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="js/highstock.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/modules/accessibility.js"></script>
     <script src="js/theme.js"></script>
-    <script src="js/app.js" type="text/javascript"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>

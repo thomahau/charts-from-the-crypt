@@ -19,29 +19,12 @@ body {
 	max-height: 38px;
 }
 
+.input:focus {
+	border: 1.3px solid #c9b158;
+}
+
 .help {
 	margin-top: 0;
-}
-
-.ui-menu {
-    background-color: white;
-    height: 10px;
-    width: 185px;
-    font-size: 16px;
-}
-
-.ui-menu-item {
-	background-color: white;
-	color: black;
-	padding-left: 10px;
-}
-
-.ui-menu-item:hover {
-	background-color: #C9B158;
-}
-
-.ui-autocomplete {
-	background-color: #C9B158;
 }
 
 main {
@@ -55,4 +38,17 @@ main {
 
 code {
 	background-color: black;
+}
+
+/* Extra styling for autocomplete widget */
+.ui-menu {
+	max-height: 70vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	font-size: 14px;
+}
+
+.ui-widget-content .ui-state-active {
+	border: 1px solid #222222;
+	background: #c9b158;
 }
