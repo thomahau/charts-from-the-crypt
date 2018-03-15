@@ -247,7 +247,7 @@ function renderChart(rawData) {
 }
 
 function getBaseChartOptions(latestPrice) {
-	const toolTipDecimals = countDecimals(latestPrice);
+	const tooltipDecimals = countDecimals(latestPrice);
 
 	let chartOptions = {
 		chart: {
@@ -299,7 +299,7 @@ function getBaseChartOptions(latestPrice) {
 			headerFormat: '',
 			pointFormat:
 				'<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-			valueDecimals: toolTipDecimals
+			valueDecimals: tooltipDecimals
 		}
 	};
 	return chartOptions;
