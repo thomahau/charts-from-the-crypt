@@ -247,6 +247,8 @@ function renderChart(rawData) {
 }
 
 function getBaseChartOptions(latestPrice) {
+	const toolTipDecimals = countDecimals(latestPrice);
+
 	let chartOptions = {
 		chart: {
 			renderTo: 'js-chart-container',
@@ -297,8 +299,7 @@ function getBaseChartOptions(latestPrice) {
 			headerFormat: '',
 			pointFormat:
 				'<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-			// TODO: customize decimals?
-			valueDecimals: 3
+			valueDecimals: toolTipDecimals
 		}
 	};
 	return chartOptions;
@@ -324,6 +325,13 @@ function addRangeChartOptions(chartOptions) {
 	chartOptions.tooltip.headerFormat = tooltipHeaderFormat;
 
 	return chartOptions;
+}
+
+function countDecimals(value) {
+	if (Math.floor(value) !== value) {
+		return value.toString().split('.')[1].length || 0;
+	}
+	return 0;
 }
 
 function renderBannerHelpButton() {
