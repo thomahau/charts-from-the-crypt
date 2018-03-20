@@ -16,11 +16,7 @@ const STORE = {
 
 function fetchCoinList() {
 	// Returns current top 200 cryptocurrencies by marketcap
-	const url =
-		// Bypass Same Origin Policy
-		'https://nexunity.org/tools/bypass-sop/?url=' +
-		COINMARKETCAP_ENDPOINT +
-		'ticker/?limit=200';
+	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=200';
 
 	$.getJSON(url, populateSearchOptions).fail(showErr);
 }
