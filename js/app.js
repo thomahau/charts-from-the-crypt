@@ -14,9 +14,12 @@ const STORE = {
 	range: 'All'
 };
 
+// Bypass Same Origin Policy
+// 'http://anyorigin.com/go?url=' +
+
 function fetchCoinList() {
-	// Returns current top 200 cryptocurrencies by marketcap
-	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=200';
+	// Returns all cryptocurrencies tracked by coinmarketcap.com
+	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=0';
 
 	$.getJSON(url, populateSearchOptions).fail(showErr);
 }
