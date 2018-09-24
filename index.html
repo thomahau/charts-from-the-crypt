@@ -1,147 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="description" content="Interactive price history charts for various cryptocurrencies">
-    <title>Charts from the Crypt</title>
-    <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/cyborg/bulmaswatch.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
-    <link rel="stylesheet" href="css/styles.css" type="text/css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-  </head>
-  <body>
-    <header role="banner">
-      <div class="columns is-centered is-vcentered has-text-centered">
-        <div class="column is-narrow">
-          <form class="coin-form">
-            <label class="label" for="coin">
-              Cryptocurrency: <br />
-              <span class="help is-danger" aria-live="assertive" role="alert" hidden></span>
-            </label>
-            <div class="control">
-              <input class="input" type="search" id="coin" name="coin" placeholder="e.g. Bitcoin (BTC)" required />
-            </div>
-          </form>
-        </div>
-        <div class="column is-narrow">
-          <div class="field is-grouped is-grouped-centered">
-            <p class="control">
-              <a class="button js-currency-btn is-warning is-outlined is-selected" aria-label="US Dollars" role="button">
-                <span class="icon">
-                  <i class="fas fa-dollar-sign"></i>
-                </span>
-              </a>
-            </p>
-            <p class="control">
-              <a class="button js-currency-btn" aria-label="Euros" role="button">
-                <span class="icon">
-                  <i class="fas fa-euro-sign"></i>
-                </span>
-              </a>
-            </p>
-            <p class="control">
-              <a class="button js-currency-btn" aria-label="Bitcoin" role="button">
-                <span class="icon">
-                  <i class="fab fa-btc"></i>
-                </span>
-              </a>
-            </p>
-            <p class="control">
-              <a class="button js-scale-btn is-warning is-outlined" role="button">Linear</a>
-            </p>
-            <p class="control">
-              <a class="button js-scale-btn" role="button">Logarithmic</a>
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div class="columns is-centered is-mobile js-header-second-level">
-        <div class="column is-narrow">
-          <!-- Mobile range menu -->
-          <div class="dropdown is-hidden-desktop">
-            <div class="dropdown-trigger">
-              <button class="button is-warning is-outlined" aria-haspopup="true" aria-controls="dropdown-menu">
-                <span class="js-selected-range">Range: All</span>
-                <span class="icon is-small">
-                  <i class="fas fa-angle-down" aria-hidden="true"></i>
-                </span>
-              </button>
-            </div>
-            <div class="dropdown-menu" id="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <a class="dropdown-item" aria-label="Range: 1 day" role="button">1d</a>
-                <a class="dropdown-item" aria-label="Range: 1 week" role="button">1w</a>
-                <a class="dropdown-item" aria-label="Range: 1 month" role="button">1m</a>
-                <a class="dropdown-item" aria-label="Range: 3 months" role="button">3m</a>
-                <a class="dropdown-item" aria-label="Range: 6 months" role="button">6m</a>
-                <a class="dropdown-item" aria-label="Range: 1 year" role="button">1y</a>
-                <a class="dropdown-item button is-warning has-text-left" aria-label="Range: all data" role="button">All</a>
-              </div>
-            </div>
-          </div>
-          <!-- Desktop range menu -->
-          <div class="field is-grouped is-grouped-centered is-hidden-touch">
-            <label class="label range-label">Range:</label>
-              <p class="control">
-                <a class="button js-range-btn" aria-label="Range: 1 day" role="button">1d</a>
-              </p>
-              <p class="control">
-                <a class="button js-range-btn" aria-label="Range: 1 week" role="button">1w</a>
-              </p>
-              <p class="control">
-                <a class="button js-range-btn" aria-label="Range: 1 month" role="button">1m</a>
-              </p>
-              <p class="control">
-                <a class="button js-range-btn" aria-label="Range: 3 months" role="button">3m</a>
-              </p>
-              <p class="control">
-                <a class="button js-range-btn" aria-label="Range: 6 months" role="button">6m</a>
-              </p>
-              <p class="control">
-                <a class="button js-range-btn" aria-label="Range: 1 year" role="button">1y</a>
-              </p>
-              <p class="control">
-                <a class="button js-range-btn is-warning is-outlined" aria-label="Range: all data" role="button">All</a>
-              </p>
-          </div>
-        </div>
-      </div>
-    </header>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="description" content="Interactive price history charts for various cryptocurrencies">
+  <title>Charts from the Crypt</title>
+  <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/cyborg/bulmaswatch.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
+  <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
 
-    <div class="modal" aria-live="assertive">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Charts from the Crypt</p>
-          <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-          <p>Select which cryptocurrency you would like to investigate with the input field. More than 1500 coins are available.<br /><br />
-          Use the buttons to choose the desired currency to compare with, the desired range of time to chart, and whether you would like a linear or a logarithmic price scale.</p>
-        </section>
-        <footer class="modal-card-foot">
-          <p>You can find the source code for this app <a class="has-text-warning" href="https://github.com/thomahau/charts-from-the-crypt">here</a>. Data comes courtesy of the <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a> and <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> APIs. The charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
-        </footer>
+<body>
+  <header role="banner">
+    <div class="columns is-centered is-vcentered has-text-centered">
+      <div class="column is-narrow">
+        <form class="coin-form">
+          <label class="label" for="coin">
+            Cryptocurrency: <br />
+            <span class="help is-danger" aria-live="assertive" role="alert" hidden></span>
+          </label>
+          <div class="control">
+            <input class="input" type="search" id="coin" name="coin" placeholder="e.g. Bitcoin (BTC)" required />
+          </div>
+        </form>
+      </div>
+      <div class="column is-narrow">
+        <div class="field is-grouped is-grouped-centered">
+          <p class="control">
+            <a class="button js-currency-btn is-warning is-outlined is-selected" aria-label="US Dollars" role="button">
+              <span class="icon">
+                <i class="fas fa-dollar-sign"></i>
+              </span>
+            </a>
+          </p>
+          <p class="control">
+            <a class="button js-currency-btn" aria-label="Euros" role="button">
+              <span class="icon">
+                <i class="fas fa-euro-sign"></i>
+              </span>
+            </a>
+          </p>
+          <p class="control">
+            <a class="button js-currency-btn" aria-label="Bitcoin" role="button">
+              <span class="icon">
+                <i class="fab fa-btc"></i>
+              </span>
+            </a>
+          </p>
+          <p class="control">
+            <a class="button js-scale-btn is-warning is-outlined" role="button">Linear</a>
+          </p>
+          <p class="control">
+            <a class="button js-scale-btn" role="button">Logarithmic</a>
+          </p>
+        </div>
       </div>
     </div>
 
-    <main role="main">
-      <div class="container has-text-centered welcome-message">
-        <h1 class="title">Charts from the Crypt</h1>
-        <p class="subtitle">Interactive price history charts for various cryptocurrencies</p>
-        <a class="button is-warning is-outlined js-help-btn" role="button">Getting started</a>
+    <div class="columns is-centered is-mobile js-header-second-level">
+      <div class="column is-narrow">
+        <!-- Mobile range menu -->
+        <div class="dropdown is-hidden-desktop">
+          <div class="dropdown-trigger">
+            <button class="button is-warning is-outlined" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span class="js-selected-range">Range: All</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a class="dropdown-item" aria-label="Range: 1 day" role="button">1d</a>
+              <a class="dropdown-item" aria-label="Range: 1 week" role="button">1w</a>
+              <a class="dropdown-item" aria-label="Range: 1 month" role="button">1m</a>
+              <a class="dropdown-item" aria-label="Range: 3 months" role="button">3m</a>
+              <a class="dropdown-item" aria-label="Range: 6 months" role="button">6m</a>
+              <a class="dropdown-item" aria-label="Range: 1 year" role="button">1y</a>
+              <a class="dropdown-item button is-warning has-text-left" aria-label="Range: all data" role="button">All</a>
+            </div>
+          </div>
+        </div>
+        <!-- Desktop range menu -->
+        <div class="field is-grouped is-grouped-centered is-hidden-touch">
+          <label class="label range-label">Range:</label>
+          <p class="control">
+            <a class="button js-range-btn" aria-label="Range: 1 day" role="button">1d</a>
+          </p>
+          <p class="control">
+            <a class="button js-range-btn" aria-label="Range: 1 week" role="button">1w</a>
+          </p>
+          <p class="control">
+            <a class="button js-range-btn" aria-label="Range: 1 month" role="button">1m</a>
+          </p>
+          <p class="control">
+            <a class="button js-range-btn" aria-label="Range: 3 months" role="button">3m</a>
+          </p>
+          <p class="control">
+            <a class="button js-range-btn" aria-label="Range: 6 months" role="button">6m</a>
+          </p>
+          <p class="control">
+            <a class="button js-range-btn" aria-label="Range: 1 year" role="button">1y</a>
+          </p>
+          <p class="control">
+            <a class="button js-range-btn is-warning is-outlined" aria-label="Range: all data" role="button">All</a>
+          </p>
+        </div>
       </div>
-      <div class="container" id="js-chart-container" aria-live="polite" hidden></div>
-    </main>
+    </div>
+  </header>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-    <script src="https://code.highcharts.com/stock/highstock.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+  <div class="modal" aria-live="assertive">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Charts from the Crypt</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <p>Select which cryptocurrency you would like to investigate with the input field. More than 1500 coins are
+          available.<br /><br />
+          Use the buttons to choose the desired currency to compare with, the desired range of time to chart, and
+          whether you would like a linear or a logarithmic price scale.</p>
+      </section>
+      <footer class="modal-card-foot">
+        <p>You can find the source code for this app <a class="has-text-warning" href="https://github.com/thomahau/charts-from-the-crypt">here</a>.
+          Data comes courtesy of the <a class="has-text-warning" href="https://coinmarketcap.com/api/">CoinMarketCap</a>
+          and <a class="has-text-warning" href="https://min-api.cryptocompare.com/">CryptoCompare</a> APIs. The
+          charting library used is <a class="has-text-warning" href="https://www.highcharts.com/">Highcharts</a>.
+      </footer>
+    </div>
+  </div>
+
+  <main role="main">
+    <div class="container has-text-centered welcome-message">
+      <h1 class="title">Charts from the Crypt</h1>
+      <p class="subtitle">Interactive price history charts for various cryptocurrencies</p>
+      <a class="button is-warning is-outlined js-help-btn" role="button">Getting started</a>
+    </div>
+    <div class="container" id="js-chart-container" aria-live="polite" hidden></div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <!-- <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <script src="js/theme.js"></script> -->
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="js/d3chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
 </html>
