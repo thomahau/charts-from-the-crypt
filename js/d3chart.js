@@ -14,7 +14,7 @@ const t = function() {
 };
 
 const parseTime = d3.timeParse('%d/%m/%Y');
-const formatTime = d3.timeFormat('%d/%m/%Y');
+const formatTime = d3.timeFormat('%a, %b %d, %Y');
 const bisectDate = d3.bisector(function(d) {
   return d.time;
 }).left;
@@ -24,7 +24,7 @@ g.append('path')
   .attr('class', 'line')
   .attr('fill', 'none')
   .attr('stroke', 'yellow')
-  .attr('stroke-width', '3px');
+  .attr('stroke-width', '2px');
 
 // Labels
 const xLabel = g
@@ -52,7 +52,10 @@ const x = d3.scaleTime().range([0, width]);
 const y = d3.scaleLinear().range([height, 0]);
 
 // X-axis
-const xAxisCall = d3.axisBottom().ticks(4);
+const xAxisCall = d3
+  .axisBottom()
+  .tickFormat(parseTime())
+  .ticks(6);
 const xAxis = g
   .append('g')
   .attr('class', 'x axis')
@@ -85,7 +88,7 @@ function handleData(rawData) {
     showErr(rawData.Message);
   } else {
     const data = rawData['Data'].map(dataPoint => {
-      return { time: dataPoint.time, price: dataPoint.close };
+      return { time: dataPoint.time * 1000, price: dataPoint.close };
     });
     // const latestPrice = data[data.length - 1][1];
 
@@ -104,7 +107,7 @@ function handleData(rawData) {
 }
 
 function update(data) {
-  console.log(data);
+  // console.log(data);
   // Update scales
   x.domain(
     d3.extent(data, function(d) {
@@ -113,84 +116,117 @@ function update(data) {
   );
   y.domain([
     d3.min(data, function(d) {
-      return d.price; // return d[yValue];
+      return d.price;
     }) / 1.005,
     d3.max(data, function(d) {
-      return d.price; // return d[yValue];
+      return d.price;
     }) * 1.005
   ]);
 
   // Fix for format values
   const formatSi = d3.format('.2s');
+  // const formatSi = d3.format('$.2s');
   function formatAbbreviation(x) {
-    const s = formatSi(x);
-    switch (s[s.length - 1]) {
-      case 'G':
-        return s.slice(0, -1) + 'B';
-      case 'k':
-        return s.slice(0, -1) + 'K';
-    }
-    return s;
+    return d3.format('$,')(x.toFixed(2));
+    // const s = formatSi(x);
+    // console.log(s);
+    // switch (s[s.length - 1]) {
+    //   case 'G':
+    //     return s.slice(0, -1) + 'B';
+    //   case 'k':
+    //     return s.slice(0, -1) + 'K';
+    // }
+    // return s.toFixed(2);
   }
 
   // Update axes
   xAxisCall.scale(x);
   xAxis.transition(t()).call(xAxisCall);
   yAxisCall.scale(y);
-  yAxis.transition(t()).call(yAxisCall.tickFormat(formatAbbreviation)); // formatAbbreviation
+  yAxis.transition(t()).call(yAxisCall.tickFormat(formatAbbreviation));
 
   // Clear old tooltips
   d3.select('.focus').remove();
   d3.select('.overlay').remove();
 
   // Tooltip code
-  //   const focus = g
-  //     .append('g')
-  //     .attr('class', 'focus')
-  //     .style('display', 'none');
-  //   focus
-  //     .append('line')
-  //     .attr('class', 'x-hover-line hover-line')
-  //     .attr('y1', 0)
-  //     .attr('y2', height);
-  //   focus
-  //     .append('line')
-  //     .attr('class', 'y-hover-line hover-line')
-  //     .attr('x1', 0)
-  //     .attr('x2', width);
-  //   focus.append('circle').attr('r', 5);
-  //   focus
-  //     .append('text')
-  //     .attr('x', 15)
-  //     .attr('dy', '.31em');
-  //   svg
-  //     .append('rect')
-  //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-  //     .attr('class', 'overlay')
-  //     .attr('width', width)
-  //     .attr('height', height)
-  //     .on('mouseover', function() {
-  //       focus.style('display', null);
-  //     })
-  //     .on('mouseout', function() {
-  //       focus.style('display', 'none');
-  //     })
-  //     .on('mousemove', mousemove);
+  const focus = g
+    .append('g')
+    .attr('class', 'focus')
+    .style('display', 'none');
+  focus
+    .append('rect')
+    .attr('width', 150)
+    .attr('height', 55)
+    .attr('x', -60)
+    .attr('y', -80)
+    .attr('fill', '#888')
+    .attr('fill-opacity', 0.7);
+  focus
+    .append('line')
+    .attr('class', 'x-hover-line hover-line')
+    .attr('stroke', 'white')
+    .style('stroke-dasharray', '3,3')
+    .attr('y1', 0)
+    .attr('y2', height);
+  focus
+    .append('line')
+    .attr('class', 'y-hover-line hover-line')
+    .attr('stroke', 'white')
+    .style('stroke-dasharray', '3,3')
+    .attr('x1', 0)
+    .attr('x2', width);
+  focus
+    .append('circle')
+    .attr('r', 5)
+    .attr('stroke', 'black')
+    .attr('fill', 'yellow');
+  focus
+    .append('text')
+    .attr('class', 'date')
+    .attr('x', -50)
+    .attr('y', -60)
+    .style('fill', 'white');
+  focus
+    .append('text')
+    .attr('class', 'price')
+    .attr('x', -50)
+    .attr('y', -35)
+    .style('fill', 'white');
+  svg
+    .append('rect')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+    .attr('class', 'overlay')
+    .attr('width', width)
+    .attr('height', height)
+    .style('fill', 'none')
+    .style('pointer-events', 'all')
+    .on('mouseover', function() {
+      focus.style('display', null);
+    })
+    .on('mouseout', function() {
+      focus.style('display', 'none');
+    })
+    .on('mousemove', mousemove);
 
-  //   function mousemove() {
-  //     const x0 = x.invert(d3.mouse(this)[0]);
-  //     const i = bisectDate(data, x0, 1);
-  //     const d0 = data[i - 1];
-  //     const d1 = data[i];
-  //     const d = d1 && d0 ? (x0 - d0.time > d1.time - x0 ? d1 : d0) : 0;
+  function mousemove() {
+    const x0 = x.invert(d3.mouse(this)[0]).getTime();
+    const i = bisectDate(data, x0, 1);
+    const d0 = data[i - 1];
+    const d1 = data[i];
+    const d = d1 && d0 ? (x0 - d0.time > d1.time - x0 ? d1 : d0) : 0;
 
-  //     focus.attr('transform', 'translate(' + x(d.time) + ',' + y(d['price']) + ')');
-  //     focus.select('text').text(function() {
-  //       return d3.format('$,')(d['price'].toFixed(2));
-  //     });
-  //     focus.select('.x-hover-line').attr('y2', height - y(d['price']));
-  //     focus.select('.y-hover-line').attr('x2', -x(d.time));
-  //   }
+    focus.attr('transform', 'translate(' + x(d.time) + ',' + y(d.price) + ')');
+    focus.style('left', d3.event.pageX - 34 + 'px').style('top', d3.event.pageY - 12 + 'px');
+    focus.select('text.date').text(function() {
+      return formatTime(new Date(d.time));
+    });
+    focus.select('text.price').text(function() {
+      return d3.format('$,')(d.price.toFixed(2));
+    });
+    focus.select('.x-hover-line').attr('y2', height - y(d.price));
+    focus.select('.y-hover-line').attr('x2', -x(d.time));
+  }
 
   // Path generator
   line = d3
@@ -199,7 +235,7 @@ function update(data) {
       return x(d.time);
     })
     .y(function(d) {
-      return y(d['price']);
+      return y(d.price);
     });
 
   // Update our line path
