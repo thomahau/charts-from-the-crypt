@@ -1,5 +1,5 @@
-const margin = { left: 200, right: 50, top: 50, bottom: 100 };
-const height = 500 - margin.top - margin.bottom;
+const margin = { left: 200, right: 100, top: 100, bottom: 100 };
+const height = 550 - margin.top - margin.bottom;
 const width = 1300 - margin.left - margin.right;
 
 const svg = d3
@@ -18,6 +18,19 @@ const formatTime = d3.timeFormat('%a, %b %d, %Y');
 const bisectDate = d3.bisector(function(d) {
   return d.time;
 }).left;
+
+const euro = d3.formatLocale({
+  decimal: '.',
+  thousands: ',',
+  grouping: [3],
+  currency: ['€', '']
+});
+const btc = d3.formatLocale({
+  decimal: '.',
+  thousands: ',',
+  grouping: [3],
+  currency: ['', 'BTC']
+});
 
 // Add the line for the first time
 g.append('path')
@@ -45,11 +58,11 @@ const yLabel = g
   .attr('font-size', '20px')
   .attr('text-anchor', 'middle')
   .attr('fill', 'white')
-  .text('Price (USD)');
+  .text(`Price (${STORE.tsym})`);
 
 // Scales
 const x = d3.scaleTime().range([0, width]);
-const y = d3.scaleLinear().range([height, 0]);
+let y;
 
 // X-axis
 const xAxisCall = d3
@@ -109,6 +122,11 @@ function handleData(rawData) {
 function update(data) {
   // console.log(data);
   // Update scales
+  if (STORE.scale === 'logarithmic') {
+    y = d3.scaleLog().range([height, 0]);
+  } else {
+    y = d3.scaleLinear().range([height, 0]);
+  }
   x.domain(
     d3.extent(data, function(d) {
       return d.time;
@@ -124,19 +142,17 @@ function update(data) {
   ]);
 
   // Fix for format values
-  const formatSi = d3.format('.2s');
-  // const formatSi = d3.format('$.2s');
   function formatAbbreviation(x) {
-    return d3.format('$,')(x.toFixed(2));
-    // const s = formatSi(x);
-    // console.log(s);
-    // switch (s[s.length - 1]) {
-    //   case 'G':
-    //     return s.slice(0, -1) + 'B';
-    //   case 'k':
-    //     return s.slice(0, -1) + 'K';
-    // }
-    // return s.toFixed(2);
+    switch (STORE.tsym) {
+      case 'EUR':
+        return euro.format('$,')(x.toFixed(2));
+        break;
+      case 'BTC':
+        return btc.format('$,')(x.toFixed(2));
+        break;
+      default:
+        return d3.format('$,')(x.toFixed(2));
+    }
   }
 
   // Update axes
@@ -156,10 +172,10 @@ function update(data) {
     .style('display', 'none');
   focus
     .append('rect')
-    .attr('width', 150)
-    .attr('height', 55)
+    .attr('width', 130)
+    .attr('height', 50)
     .attr('x', -60)
-    .attr('y', -80)
+    .attr('y', -78)
     .attr('fill', '#888')
     .attr('fill-opacity', 0.7);
   focus
@@ -186,13 +202,17 @@ function update(data) {
     .attr('class', 'date')
     .attr('x', -50)
     .attr('y', -60)
-    .style('fill', 'white');
+    .style('fill', 'white')
+    .style('font-size', '0.8rem')
+    .style('font-weight', 'bold');
   focus
     .append('text')
     .attr('class', 'price')
     .attr('x', -50)
     .attr('y', -35)
-    .style('fill', 'white');
+    .style('fill', 'white')
+    .style('font-size', '0.8rem')
+    .style('font-weight', 'bold');
   svg
     .append('rect')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
@@ -222,7 +242,16 @@ function update(data) {
       return formatTime(new Date(d.time));
     });
     focus.select('text.price').text(function() {
-      return d3.format('$,')(d.price.toFixed(2));
+      switch (STORE.tsym) {
+        case 'EUR':
+          return euro.format('$,')(d.price.toFixed(2));
+          break;
+        case 'BTC':
+          return btc.format('$,')(d.price.toFixed(2));
+          break;
+        default:
+          return d3.format('$,')(d.price.toFixed(2));
+      }
     });
     focus.select('.x-hover-line').attr('y2', height - y(d.price));
     focus.select('.y-hover-line').attr('x2', -x(d.time));
@@ -244,11 +273,5 @@ function update(data) {
     .attr('d', line(data));
 
   // Update y-axis label
-  //   const newText =
-  //     yValue == 'price_usd'
-  //       ? 'Price (USD)'
-  //       : yValue == 'market_cap'
-  //         ? 'Market Capitalization (USD)'
-  //         : '24 Hour Trading Volume (USD)';
-  //   yLabel.text(newText);
+  yLabel.text(`Price (${STORE.tsym})`);
 }
