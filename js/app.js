@@ -13,6 +13,8 @@ const STORE = {
   scale: 'linear',
   range: 'All'
 };
+let priceData;
+let lineChart;
 
 // Bypass Same Origin Policy
 // 'http://anyorigin.com/go?url=' +
@@ -212,7 +214,22 @@ function fetchPriceData() {
 
   //   $.getJSON(url, renderChart).fail(showErr);
   d3.json(url)
-    .then(handleData)
+    .then(function(data) {
+      if (data.Response === 'Error') {
+        showErr(data.Message);
+      } else {
+        priceData = data['Data'];
+
+        $('.welcome-message, .error-message').remove();
+        $('#js-chart-container').prop('hidden', false);
+
+        if (!$('.js-help-btn').length) {
+          renderBannerHelpButton();
+        }
+
+        lineChart ? lineChart.wrangleData() : (lineChart = new LineChart('#js-chart-container'));
+      }
+    })
     .catch(err => showErr(err));
 }
 
