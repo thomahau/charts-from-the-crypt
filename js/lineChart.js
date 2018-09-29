@@ -1,6 +1,8 @@
 const parseTime = d3.timeParse('%d/%m/%Y');
 const formatTime = d3.timeFormat('%a, %b %d, %Y');
 
+const container = $('#js-chart-container');
+
 LineChart = function(_parentElement) {
   this.parentElement = _parentElement;
 
@@ -19,6 +21,8 @@ LineChart.prototype.initVis = function() {
     .append('svg')
     .attr('width', vis.width + vis.margin.left + vis.margin.right)
     .attr('height', vis.height + vis.margin.top + vis.margin.bottom);
+  // .attr('preserveAspectRatio', 'none')
+  // .attr('viewBox', `0 0 ${container.width()} 550`);
   vis.g = vis.svg
     .append('g')
     .attr('transform', 'translate(' + vis.margin.left + ', ' + vis.margin.top + ')');

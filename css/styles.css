@@ -56,3 +56,8 @@ code {
   border: 1px solid #222222;
   background: #c9b158;
 }
+
+#js-chart-container {
+  position: relative;
+  vertical-align: middle;
+}
