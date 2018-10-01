@@ -44,6 +44,13 @@ code {
   background-color: black;
 }
 
+#js-chart-container {
+  width: 100%;
+  max-width: 1300px;
+  position: relative;
+  vertical-align: middle;
+}
+
 /* Styling for autocomplete widget */
 .ui-menu {
   max-height: 70vh;
@@ -55,9 +62,4 @@ code {
 .ui-widget-content .ui-state-active {
   border: 1px solid #222222;
   background: #c9b158;
-}
-
-#js-chart-container {
-  position: relative;
-  vertical-align: middle;
 }

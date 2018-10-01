@@ -1,8 +1,6 @@
 const parseTime = d3.timeParse('%d/%m/%Y');
 const formatTime = d3.timeFormat('%a, %b %d, %Y');
 
-const container = $('#js-chart-container');
-
 LineChart = function(_parentElement) {
   this.parentElement = _parentElement;
 
@@ -19,10 +17,11 @@ LineChart.prototype.initVis = function() {
   vis.svg = d3
     .select(vis.parentElement)
     .append('svg')
-    .attr('width', vis.width + vis.margin.left + vis.margin.right)
-    .attr('height', vis.height + vis.margin.top + vis.margin.bottom);
-  // .attr('preserveAspectRatio', 'none')
-  // .attr('viewBox', `0 0 ${container.width()} 550`);
+    // .attr('width', vis.width + vis.margin.left + vis.margin.right)
+    // .attr('height', vis.height + vis.margin.top + vis.margin.bottom)
+    .attr('viewBox', `0 0 1300 550`)
+    .attr('preserveAspectRatio', 'xMidYMid');
+
   vis.g = vis.svg
     .append('g')
     .attr('transform', 'translate(' + vis.margin.left + ', ' + vis.margin.top + ')');
@@ -77,6 +76,7 @@ LineChart.prototype.initVis = function() {
   vis.yAxisCall = d3.axisLeft();
   vis.yAxis = vis.g.append('g').attr('class', 'y axis');
 
+  vis.addLegend();
   vis.wrangleData();
 };
 
@@ -86,7 +86,7 @@ LineChart.prototype.wrangleData = function() {
   vis.data = priceData.map(dataPoint => {
     return { time: dataPoint.time * 1000, price: dataPoint.close };
   });
-  // const latestPrice = data[data.length - 1][1];
+
   vis.updateVis();
 };
 
@@ -121,6 +121,7 @@ LineChart.prototype.updateVis = function() {
   // Clear old tooltips
   d3.select('.focus').remove();
   d3.select('.overlay').remove();
+  d3.select('.legendText').remove();
 
   // Tooltip code
   const focus = vis.g
@@ -210,4 +211,22 @@ LineChart.prototype.updateVis = function() {
 
   // Update y-axis label
   vis.yLabel.text(`Price (${STORE.tsym})`);
+  vis.addLegend();
+};
+
+LineChart.prototype.addLegend = function() {
+  let vis = this;
+
+  const legend = vis.g.append('g').attr('transform', 'translate(' + 50 + ', ' + -25 + ')');
+  const legendText = `${STORE.coin} (${STORE.fsym})`;
+
+  legend
+    .append('text')
+    .attr('class', 'legendText')
+    .attr('x', 350)
+    .attr('y', -20)
+    .attr('text-anchor', 'start')
+    .attr('font-size', '26px')
+    .attr('fill', 'white')
+    .text(legendText);
 };
