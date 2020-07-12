@@ -1,6 +1,6 @@
 'use strict';
 
-const COINMARKETCAP_ENDPOINT = 'https://api.coinmarketcap.com/v1/';
+const LAMBDA_URL = 'https://h420wm7t6e.execute-api.us-east-1.amazonaws.com/dev/tickers?currency=USD';
 const CRYPTOCOMPARE_ENDPOINT = 'https://min-api.cryptocompare.com/data/';
 const APP_NAME = 'charts_from_the_crypt';
 
@@ -14,18 +14,12 @@ const STORE = {
 	range: 'All'
 };
 
-// Bypass Same Origin Policy
-// 'http://anyorigin.com/go?url=' +
-
 function fetchCoinList() {
-	// Returns all cryptocurrencies tracked by coinmarketcap.com
-	const url = COINMARKETCAP_ENDPOINT + 'ticker/?limit=0';
-
-	$.getJSON(url, populateSearchOptions).fail(showErr);
+	$.getJSON(LAMBDA_URL, populateSearchOptions).fail(showErr);
 }
 
 function populateSearchOptions(rawData) {
-	STORE.availableCoins = rawData.map(coin => {
+	STORE.availableCoins = rawData.data.map(coin => {
 		return `${coin.name} (${coin.symbol})`;
 	});
 
